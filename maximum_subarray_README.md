@@ -1,37 +1,42 @@
-# Maximum Subarray Sum
+# Maximum Subarray
 
 ## Problem Description
 Given an integer array `nums`, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
 
-## Example
-```python
-Input: [-2,1,-3,4,-1,2,1,-5,4]
+### Examples
+```
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
 Output: 6
-Explanation: [4,-1,2,1] has the largest sum = 6
+Explanation: [4,-1,2,1] has the largest sum = 6.
+
+Input: nums = [1]
+Output: 1
+
+Input: nums = [5,4,-1,7,8]
+Output: 23
 ```
 
-## Solution Approach: Kadane's Algorithm
-The solution uses Kadane's Algorithm, which is an efficient way to solve the maximum subarray problem with the following steps:
+## Approach
+1. Kadane's Algorithm:
+   - Keep track of current sum and maximum sum
+   - For each number:
+     - Add it to current sum
+     - Update maximum sum if current sum is greater
+     - Reset current sum to 0 if it becomes negative
 
-1. Initialize variables:
-   - `current_sum`: tracks the current subarray sum
-   - `max_sum`: tracks the maximum sum found so far
-   - Track indices to return the actual subarray
-
-2. Iterate through the array:
-   - If `current_sum` becomes negative, reset it (start fresh from current element)
-   - Otherwise, add the current element to `current_sum`
-   - Update `max_sum` if `current_sum` becomes larger
-
-3. Return both the maximum sum and the subarray that produces it
+### Key Points
+- O(n) time complexity
+- O(1) space complexity
+- Handles negative numbers
+- Single pass solution
 
 ## Time Complexity
-- O(n) where n is the length of the input array
-- We only need one pass through the array
+- O(n) where n is the length of the array
+  - We process each element exactly once
 
 ## Space Complexity
-- O(1) for computing just the sum
-- O(k) for storing the result subarray, where k is the length of the maximum subarray
+- O(1) constant space
+  - We only store current and maximum sums
 
 ## Edge Cases Handled
 - Empty array

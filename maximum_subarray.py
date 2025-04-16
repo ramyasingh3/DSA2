@@ -16,52 +16,52 @@ Input: [5,4,-1,7,8]
 Output: 23
 """
 
-def max_subarray(nums):
+from typing import List
+
+def max_subarray(nums: List[int]) -> int:
+    """
+    Find the maximum sum of any contiguous subarray.
+    
+    Args:
+        nums: List of integers
+        
+    Returns:
+        Maximum sum of any contiguous subarray
+    """
     if not nums:
         return 0
-    
+        
     current_sum = max_sum = nums[0]
-    start_idx = end_idx = max_start_idx = max_end_idx = 0
     
-    for i in range(1, len(nums)):
-        # If current_sum becomes negative, start fresh from current element
-        if current_sum < 0:
-            current_sum = nums[i]
-            start_idx = i
-        else:
-            current_sum += nums[i]
-        
-        # Update end index
-        end_idx = i
-        
-        # Update maximum sum and indices if we find a better sum
-        if current_sum > max_sum:
-            max_sum = current_sum
-            max_start_idx = start_idx
-            max_end_idx = end_idx
+    for num in nums[1:]:
+        # Choose between starting new subarray or continuing current
+        current_sum = max(num, current_sum + num)
+        # Update max_sum if current_sum is larger
+        max_sum = max(max_sum, current_sum)
     
-    return max_sum, nums[max_start_idx:max_end_idx + 1]
+    return max_sum
 
 def test_max_subarray():
+    """Test cases for the maximum subarray solution."""
+    
     test_cases = [
-        ([-2,1,-3,4,-1,2,1,-5,4], 6, [4,-1,2,1]),
-        ([1], 1, [1]),
-        ([5,4,-1,7,8], 23, [5,4,-1,7,8]),
-        ([-1], -1, [-1]),
-        ([-2,-1], -1, [-1]),
-        ([1,-1,1], 1, [1]),
-        ([-2,1,-3,4,-1,2,1,-5,4], 6, [4,-1,2,1]),
+        ([-2, 1, -3, 4, -1, 2, 1, -5, 4], 6),
+        ([1], 1),
+        ([5, 4, -1, 7, 8], 23),
+        ([-1, -2, -3, -4], -1),
+        ([1, 2, 3, 4, 5], 15),
+        ([-2, -3, 4, -1, -2, 1, 5, -3], 7),
+        ([2, -1, 2, 3, -9, 3], 6),
+        ([-1, -2, -3, -4, -5], -1)
     ]
     
-    for i, (nums, expected_sum, expected_subarray) in enumerate(test_cases, 1):
-        max_sum, subarray = max_subarray(nums)
-        print(f"\nTest Case {i}:")
-        print(f"Input array: {nums}")
-        print(f"Expected sum: {expected_sum}, Got: {max_sum}")
-        print(f"Expected subarray: {expected_subarray}")
-        print(f"Got subarray: {subarray}")
-        print("Result: ", "✓ Passed" if max_sum == expected_sum and subarray == expected_subarray 
-              else "✗ Failed")
+    print("Testing Maximum Subarray Solution...")
+    for nums, expected in test_cases:
+        result = max_subarray(nums)
+        print(f"\nInput: nums = {nums}")
+        print(f"Expected: {expected}")
+        print(f"Got: {result}")
+        print(f"Test {'passed' if result == expected else 'failed'}")
         print("-" * 50)
 
 if __name__ == "__main__":
