@@ -1,41 +1,55 @@
 # Valid Parentheses
 
 ## Problem Description
-Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid. An input string is valid if:
-1. Open brackets must be closed by the same type of brackets.
-2. Open brackets must be closed in the correct order.
-3. Every close bracket has a corresponding open bracket of the same type.
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
 
-## Examples
-1. Valid parentheses:
-   ```
-   Input: "()"
-   Output: True
-   ```
+An input string is valid if:
+1. Open brackets must be closed by the same type of brackets
+2. Open brackets must be closed in the correct order
+3. Every close bracket has a corresponding open bracket of the same type
 
-2. Valid nested parentheses:
-   ```
-   Input: "({[]})"
-   Output: True
-   ```
+### Examples
+```
+Input: "()"
+Output: true
 
-3. Invalid parentheses:
-   ```
-   Input: "(]"
-   Output: False
-   ```
+Input: "()[]{}"
+Output: true
 
-4. Empty string:
-   ```
-   Input: ""
-   Output: True
-   ```
+Input: "(]"
+Output: false
 
-5. Unmatched parentheses:
-   ```
-   Input: "([)]"
-   Output: False
-   ```
+Input: "([)]"
+Output: false
+
+Input: "{[]}"
+Output: true
+```
+
+## Approach
+1. Use a stack to keep track of opening brackets
+2. For each character in the string:
+   - If it's an opening bracket, push it onto the stack
+   - If it's a closing bracket:
+     - Check if stack is empty (invalid)
+     - Check if top of stack matches the closing bracket
+     - Pop the matching opening bracket
+3. After processing all characters, check if stack is empty
+
+### Key Points
+- Stack-based solution
+- O(n) time complexity
+- Handles nested brackets
+- Checks for proper ordering
+
+## Time Complexity
+- O(n) where n is the length of the string
+  - We process each character exactly once
+
+## Space Complexity
+- O(n) in the worst case
+  - When all characters are opening brackets
+  - Average case is less than n
 
 ## Solution Approaches
 

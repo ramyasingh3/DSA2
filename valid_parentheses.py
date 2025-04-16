@@ -1,101 +1,55 @@
-class Solution:
-    def is_valid_stack(self, s: str) -> bool:
-        """
-        Stack-based solution with O(n) time complexity.
-        Uses a stack to track opening brackets and matches them with closing brackets.
-        """
-        stack = []
-        mapping = {')': '(', '}': '{', ']': '['}
+def is_valid(s: str) -> bool:
+    """
+    Check if a string of parentheses is valid.
+    
+    Args:
+        s: String containing only parentheses characters
         
-        for char in s:
-            if char in mapping:
-                top_element = stack.pop() if stack else '#'
-                if mapping[char] != top_element:
-                    return False
-            else:
-                stack.append(char)
-                
-        return not stack
+    Returns:
+        True if the parentheses are valid, False otherwise
+    """
+    # Mapping of closing to opening brackets
+    bracket_map = {')': '(', '}': '{', ']': '['}
+    stack = []
+    
+    for char in s:
+        if char in bracket_map:
+            # If stack is empty or top doesn't match, invalid
+            if not stack or stack[-1] != bracket_map[char]:
+                return False
+            stack.pop()
+        else:
+            # Push opening bracket onto stack
+            stack.append(char)
+    
+    # Stack should be empty for valid parentheses
+    return not stack
 
-    def is_valid_replace(self, s: str) -> bool:
-        """
-        String replacement solution with O(n^2) time complexity.
-        Repeatedly removes valid pairs until the string is empty or no more pairs can be removed.
-        """
-        while '()' in s or '{}' in s or '[]' in s:
-            s = s.replace('()', '').replace('{}', '').replace('[]', '')
-        return not s
-
-    def is_valid_count(self, s: str) -> bool:
-        """
-        Counting solution with O(n) time complexity.
-        Tracks the count of each type of bracket and ensures they match.
-        """
-        count = {'(': 0, '{': 0, '[': 0}
-        last_open = []
-        
-        for char in s:
-            if char in count:
-                count[char] += 1
-                last_open.append(char)
-            else:
-                if not last_open:
-                    return False
-                last = last_open.pop()
-                if (char == ')' and last != '(') or \
-                   (char == '}' and last != '{') or \
-                   (char == ']' and last != '['):
-                    return False
-                count[last] -= 1
-                
-        return all(v == 0 for v in count.values())
-
-def test_solution():
-    solution = Solution()
+def test_valid_parentheses():
+    """Test cases for the valid parentheses solution."""
     
-    # Test Case 1: Valid simple parentheses
-    s1 = "()"
-    print("Test Case 1:")
-    print(f"Input: {s1}")
-    print(f"Stack Solution: {solution.is_valid_stack(s1)}")
-    print(f"Replace Solution: {solution.is_valid_replace(s1)}")
-    print(f"Count Solution: {solution.is_valid_count(s1)}")
-    print()
+    test_cases = [
+        ("()", True),
+        ("()[]{}", True),
+        ("(]", False),
+        ("([)]", False),
+        ("{[]}", True),
+        ("", True),
+        ("(", False),
+        ("]", False),
+        ("((()))", True),
+        ("([{}])", True),
+        ("([{)]}", False)
+    ]
     
-    # Test Case 2: Valid mixed parentheses
-    s2 = "()[]{}"
-    print("Test Case 2:")
-    print(f"Input: {s2}")
-    print(f"Stack Solution: {solution.is_valid_stack(s2)}")
-    print(f"Replace Solution: {solution.is_valid_replace(s2)}")
-    print(f"Count Solution: {solution.is_valid_count(s2)}")
-    print()
-    
-    # Test Case 3: Invalid parentheses
-    s3 = "(]"
-    print("Test Case 3:")
-    print(f"Input: {s3}")
-    print(f"Stack Solution: {solution.is_valid_stack(s3)}")
-    print(f"Replace Solution: {solution.is_valid_replace(s3)}")
-    print(f"Count Solution: {solution.is_valid_count(s3)}")
-    print()
-    
-    # Test Case 4: Nested valid parentheses
-    s4 = "([{}])"
-    print("Test Case 4:")
-    print(f"Input: {s4}")
-    print(f"Stack Solution: {solution.is_valid_stack(s4)}")
-    print(f"Replace Solution: {solution.is_valid_replace(s4)}")
-    print(f"Count Solution: {solution.is_valid_count(s4)}")
-    print()
-    
-    # Test Case 5: Empty string
-    s5 = ""
-    print("Test Case 5:")
-    print(f"Input: {s5}")
-    print(f"Stack Solution: {solution.is_valid_stack(s5)}")
-    print(f"Replace Solution: {solution.is_valid_replace(s5)}")
-    print(f"Count Solution: {solution.is_valid_count(s5)}")
+    print("Testing Valid Parentheses Solution...")
+    for s, expected in test_cases:
+        result = is_valid(s)
+        print(f"\nInput: {s}")
+        print(f"Expected: {expected}")
+        print(f"Got: {result}")
+        print(f"Test {'passed' if result == expected else 'failed'}")
+        print("-" * 50)
 
 if __name__ == "__main__":
-    test_solution() 
+    test_valid_parentheses() 
