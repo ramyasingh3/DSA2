@@ -1,111 +1,62 @@
 # Longest Palindromic Substring
 
-## Problem Statement
-Given a string `s`, return the longest palindromic substring in `s`.
+## Problem Description
+Given a string `s`, return the longest palindromic substring in `s`. A palindrome is a string that reads the same backward as forward, e.g., "madam" or "racecar".
 
-A palindrome is a string that reads the same backward as forward, e.g., "madam" or "racecar".
-
-### Example 1:
+## Examples
 ```
 Input: s = "babad"
 Output: "bab"
 Explanation: "aba" is also a valid answer.
-```
 
-### Example 2:
-```
 Input: s = "cbbd"
 Output: "bb"
-```
 
-### Example 3:
+Input: s = "racecar"
+Output: "racecar"
+Explanation: The entire string is a palindrome.
 ```
-Input: s = "a"
-Output: "a"
-```
-
-## Constraints:
-- 1 <= s.length <= 1000
-- s consist only of lowercase English letters.
 
 ## Solution Approach
-The solution uses dynamic programming to solve this problem efficiently:
+The solution uses the "Expand Around Center" technique. Here's how it works:
 
-1. Create a 2D DP table where dp[i][j] represents whether the substring s[i:j+1] is a palindrome.
-
-2. Base cases:
-   - Every single character is a palindrome (dp[i][i] = True)
-   - For substrings of length 2, check if both characters are the same
-
-3. For substrings of length > 2:
-   - If s[i] == s[j] and dp[i+1][j-1] is True, then dp[i][j] is True
-   - Keep track of the longest palindrome found so far
-
-4. Return the longest palindromic substring
+1. For each character in the string, we treat it as the center of a potential palindrome
+2. We expand outward in both directions to find the longest palindrome
+3. We need to check both odd-length and even-length palindromes:
+   - Odd-length: center is a single character (e.g., "aba")
+   - Even-length: center is between two characters (e.g., "abba")
 
 ## Time and Space Complexity
 - Time Complexity: O(n²), where n is the length of the input string
-- Space Complexity: O(n²) for the DP table
-
-## Implementation
-The solution is implemented in Python using dynamic programming. The code includes test cases to verify the implementation.
-
-## Solution Approaches
-
-### 1. Brute Force Solution (O(n³))
-- Checks all possible substrings
-- Time Complexity: O(n³)
+  - For each character, we expand outward which can take O(n) time
+  - We do this for each of the n characters
 - Space Complexity: O(1)
-- Simple but inefficient
-- Good for understanding the problem
+  - We only use a constant amount of extra space
 
-### 2. Dynamic Programming Solution (O(n²))
-- Uses a 2D table to store palindrome information
-- Time Complexity: O(n²)
-- Space Complexity: O(n²)
-- More efficient than brute force
-- Good for learning dynamic programming
+## Implementation Details
+The solution is implemented in `longest_palindromic_substring.py` with:
+- Type hints for better code clarity
+- Comprehensive test cases covering:
+  - Basic palindrome cases
+  - Edge cases (empty string, single character)
+  - Special cases (full string palindrome, no long palindromes)
+- Clear documentation and comments
+- Helper function for expanding around center
 
-### 3. Expand Around Center Solution (O(n²))
-- Expands around each character as center
-- Time Complexity: O(n²)
-- Space Complexity: O(1)
-- Most efficient
-- Good for learning string manipulation
+## Alternative Approaches
+1. Dynamic Programming (O(n²) time, O(n²) space):
+   - Build a table to store palindrome information
+   - More complex but can be useful for related problems
 
-## Time Complexity
-- Brute Force: O(n³)
-- Dynamic Programming: O(n²)
-- Expand Around Center: O(n²)
-
-## Space Complexity
-- Brute Force: O(1)
-- Dynamic Programming: O(n²)
-- Expand Around Center: O(1)
-
-## Usage
-```python
-from longest_palindromic_substring import Solution
-
-solution = Solution()
-s = "babad"
-
-# Using brute force solution
-result = solution.longest_palindrome_brute(s)
-print(f"Longest palindromic substring: {result}")
-
-# Using dynamic programming solution
-result = solution.longest_palindrome_dp(s)
-print(f"Longest palindromic substring: {result}")
-
-# Using expand around center solution
-result = solution.longest_palindrome_expand(s)
-print(f"Longest palindromic substring: {result}")
-```
+2. Manacher's Algorithm (O(n) time, O(n) space):
+   - More complex but optimal solution
+   - Uses preprocessing to handle even/odd length palindromes
 
 ## Common Applications
+- DNA sequence analysis
 - Text processing
 - Pattern matching
-- Data validation
-- String manipulation
-- Bioinformatics 
+- Natural language processing
+- Data compression
+- Security (palindrome-based encryption)
+- Game development (word games) 
