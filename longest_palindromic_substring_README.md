@@ -1,62 +1,82 @@
 # Longest Palindromic Substring
 
 ## Problem Description
-Given a string `s`, return the longest palindromic substring in `s`. A palindrome is a string that reads the same backward as forward, e.g., "madam" or "racecar".
+Given a string `s`, return the longest palindromic substring in `s`. A palindrome is a string that reads the same backward as forward.
 
 ## Examples
 ```
 Input: s = "babad"
-Output: "bab"
-Explanation: "aba" is also a valid answer.
+Output: "bab" or "aba"
+Explanation: Both "bab" and "aba" are valid answers.
 
 Input: s = "cbbd"
 Output: "bb"
+Explanation: The longest palindromic substring is "bb".
 
-Input: s = "racecar"
-Output: "racecar"
-Explanation: The entire string is a palindrome.
+Input: s = "a"
+Output: "a"
+Explanation: The string itself is a palindrome.
 ```
 
-## Solution Approach
-The solution uses the "Expand Around Center" technique. Here's how it works:
+## Constraints
+- 1 <= s.length <= 1000
+- s consists only of lowercase English letters
 
-1. For each character in the string, we treat it as the center of a potential palindrome
-2. We expand outward in both directions to find the longest palindrome
-3. We need to check both odd-length and even-length palindromes:
-   - Odd-length: center is a single character (e.g., "aba")
-   - Even-length: center is between two characters (e.g., "abba")
+## Approach
+1. Use dynamic programming to solve the problem
+2. Create a 2D boolean array dp[i][j] where:
+   - dp[i][j] is true if s[i:j+1] is a palindrome
+   - dp[i][j] is false otherwise
+3. Base cases:
+   - Every single character is a palindrome (dp[i][i] = true)
+   - Two same characters form a palindrome (dp[i][i+1] = true if s[i] == s[i+1])
+4. For substrings of length > 2:
+   - If first and last characters match and substring between them is palindrome
+   - Then the whole substring is a palindrome
 
 ## Time and Space Complexity
-- Time Complexity: O(n²), where n is the length of the input string
-  - For each character, we expand outward which can take O(n) time
-  - We do this for each of the n characters
-- Space Complexity: O(1)
-  - We only use a constant amount of extra space
+- Time Complexity: O(n²) where n is the length of the string
+- Space Complexity: O(n²) for the dp array
 
-## Implementation Details
-The solution is implemented in `longest_palindromic_substring.py` with:
-- Type hints for better code clarity
-- Comprehensive test cases covering:
-  - Basic palindrome cases
-  - Edge cases (empty string, single character)
-  - Special cases (full string palindrome, no long palindromes)
-- Clear documentation and comments
-- Helper function for expanding around center
+## Solution
+The solution uses dynamic programming with the following key insights:
+1. We can build up the solution for longer substrings using solutions for shorter substrings
+2. A substring is a palindrome if:
+   - First and last characters match
+   - Substring between them is a palindrome
+3. We need to handle base cases properly
+4. We need to keep track of the longest palindrome found
 
-## Alternative Approaches
-1. Dynamic Programming (O(n²) time, O(n²) space):
-   - Build a table to store palindrome information
-   - More complex but can be useful for related problems
-
-2. Manacher's Algorithm (O(n) time, O(n) space):
-   - More complex but optimal solution
-   - Uses preprocessing to handle even/odd length palindromes
+## Key Points
+- A palindrome reads the same forward and backward
+- We need to handle both odd and even length palindromes
+- The solution must be efficient (O(n²) time complexity)
+- We need to handle edge cases (empty string, single character)
+- There might be multiple valid answers of the same length
 
 ## Common Applications
 - DNA sequence analysis
 - Text processing
 - Pattern matching
-- Natural language processing
-- Data compression
-- Security (palindrome-based encryption)
-- Game development (word games) 
+- String manipulation
+- Bioinformatics
+
+## Example Walkthrough
+For s = "babad":
+1. Initialize dp array with all False
+2. Set dp[i][i] = True for all i (single characters)
+3. Check for length 2:
+   - "ba": False
+   - "ab": False
+   - "ba": False
+   - "ad": False
+4. Check for length 3:
+   - "bab": True (first and last match, middle is palindrome)
+   - "aba": True (first and last match, middle is palindrome)
+   - "bad": False
+5. Check for length 4:
+   - "baba": False
+   - "abad": False
+6. Check for length 5:
+   - "babad": False
+7. Return "bab" or "aba" (both are valid answers) 
