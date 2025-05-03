@@ -1,75 +1,108 @@
-def coin_change(coins, amount):
+def coin_change_dp(coins: list, amount: int) -> int:
     """
-    Find the minimum number of coins needed to make up the given amount.
+    Find the minimum number of coins needed to make up the amount using dynamic programming.
     Time Complexity: O(amount * len(coins))
     Space Complexity: O(amount)
     """
-    # Initialize dp array with amount + 1 (which is greater than any possible answer)
-    dp = [amount + 1] * (amount + 1)
+    # dp[i] represents the minimum number of coins needed to make amount i
+    dp = [float('inf')] * (amount + 1)
     dp[0] = 0  # Base case: 0 coins needed for amount 0
     
-    # For each amount from 1 to target amount
     for i in range(1, amount + 1):
-        # Try each coin
         for coin in coins:
-            if coin <= i:
+            if i >= coin:
                 dp[i] = min(dp[i], dp[i - coin] + 1)
     
-    # If dp[amount] is still amount + 1, it means no solution exists
-    return dp[amount] if dp[amount] != amount + 1 else -1
+    return dp[amount] if dp[amount] != float('inf') else -1
 
-def coin_change_recursive(coins, amount):
+def coin_change_recursive(coins: list, amount: int) -> int:
     """
-    Recursive solution with memoization for the coin change problem.
+    Find the minimum number of coins needed to make up the amount using recursion with memoization.
     Time Complexity: O(amount * len(coins))
-    Space Complexity: O(amount)
+    Space Complexity: O(amount) for memoization
     """
-    def helper(remaining, memo):
-        # Base cases
-        if remaining < 0:
-            return float('inf')
+    memo = {}
+    
+    def min_coins(remaining: int) -> int:
         if remaining == 0:
             return 0
+        if remaining < 0:
+            return float('inf')
         if remaining in memo:
             return memo[remaining]
         
-        # Try each coin
-        min_coins = float('inf')
+        min_count = float('inf')
         for coin in coins:
-            result = helper(remaining - coin, memo)
-            if result != float('inf'):
-                min_coins = min(min_coins, result + 1)
+            count = min_coins(remaining - coin)
+            if count != float('inf'):
+                min_count = min(min_count, count + 1)
         
-        memo[remaining] = min_coins
-        return min_coins
+        memo[remaining] = min_count
+        return min_count
     
-    result = helper(amount, {})
+    result = min_coins(amount)
     return result if result != float('inf') else -1
+
+def get_coin_combination(coins: list, amount: int) -> list:
+    """
+    Find the combination of coins that makes up the amount with minimum number of coins.
+    Returns a list of coins used, or empty list if no solution exists.
+    Time Complexity: O(amount * len(coins))
+    Space Complexity: O(amount)
+    """
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    prev_coin = [-1] * (amount + 1)  # To store the last coin used for each amount
+    
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if i >= coin and dp[i - coin] + 1 < dp[i]:
+                dp[i] = dp[i - coin] + 1
+                prev_coin[i] = coin
+    
+    if dp[amount] == float('inf'):
+        return []
+    
+    # Reconstruct the combination
+    combination = []
+    remaining = amount
+    while remaining > 0:
+        coin = prev_coin[remaining]
+        combination.append(coin)
+        remaining -= coin
+    
+    return combination
 
 def main():
     # Test cases
     test_cases = [
-        ([1, 2, 5], 11),  # Expected: 3 (5 + 5 + 1)
-        ([2], 3),  # Expected: -1 (impossible)
-        ([1], 0),  # Expected: 0
-        ([1], 1),  # Expected: 1
-        ([1], 2),  # Expected: 2
-        ([186, 419, 83, 408], 6249),  # Expected: 20
-        ([1, 2, 5, 10, 20, 50, 100, 200], 520),  # Expected: 4 (200 + 200 + 100 + 20)
+        ([1, 2, 5], 11),      # Expected: 3 (5 + 5 + 1)
+        ([2], 3),             # Expected: -1 (impossible)
+        ([1], 0),             # Expected: 0
+        ([1], 1),             # Expected: 1
+        ([1], 2),             # Expected: 2
+        ([1, 2, 5], 6),       # Expected: 2 (5 + 1)
+        ([1, 2, 5], 7),       # Expected: 2 (5 + 2)
+        ([1, 2, 5], 8),       # Expected: 3 (5 + 2 + 1)
+        ([1, 2, 5], 9),       # Expected: 3 (5 + 2 + 2)
+        ([1, 2, 5], 10),      # Expected: 2 (5 + 5)
     ]
     
     print("Testing Dynamic Programming solution:")
     for coins, amount in test_cases:
-        result = coin_change(coins, amount)
+        result = coin_change_dp(coins, amount)
         print(f"Coins: {coins}, Amount: {amount}")
-        print(f"Minimum coins needed: {result}")
+        print(f"Minimum number of coins: {result}")
+        if result != -1:
+            combination = get_coin_combination(coins, amount)
+            print(f"Coin combination: {combination}")
         print()
     
-    print("\nTesting Recursive solution with memoization:")
+    print("\nTesting Recursive solution:")
     for coins, amount in test_cases:
         result = coin_change_recursive(coins, amount)
         print(f"Coins: {coins}, Amount: {amount}")
-        print(f"Minimum coins needed: {result}")
+        print(f"Minimum number of coins: {result}")
         print()
 
 if __name__ == "__main__":

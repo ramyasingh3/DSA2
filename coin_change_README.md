@@ -9,7 +9,7 @@ You may assume that you have an infinite number of each kind of coin.
 
 ## Examples
 ```
-Input: coins = [1,2,5], amount = 11
+Input: coins = [1, 2, 5], amount = 11
 Output: 3
 Explanation: 11 = 5 + 5 + 1
 
@@ -27,68 +27,85 @@ Explanation: No coins needed for amount 0.
 - 1 <= coins[i] <= 2^31 - 1
 - 0 <= amount <= 10^4
 
-## Approach 1: Dynamic Programming (Bottom-up)
-1. Create a dp array where dp[i] represents the minimum number of coins needed for amount i
-2. Initialize dp[0] = 0 (base case)
-3. Initialize all other dp values to amount + 1 (which is greater than any possible answer)
-4. For each amount from 1 to target amount:
+## Approach 1: Dynamic Programming
+1. Create an array `dp` where `dp[i]` represents the minimum number of coins needed to make amount i
+2. Initialize dp[0] = 0 (base case: 0 coins needed for amount 0)
+3. For each amount from 1 to target:
    - Try each coin denomination
-   - If the coin can be used (coin <= current amount), update dp[i] = min(dp[i], dp[i - coin] + 1)
-5. Return dp[amount] if it's not amount + 1, otherwise return -1
+   - If the coin can be used (amount >= coin value):
+     - Update dp[i] = min(dp[i], dp[i - coin] + 1)
+4. Return dp[amount] if it's not infinity, else -1
 
-## Approach 2: Recursive with Memoization (Top-down)
-1. Create a recursive function that takes remaining amount and memo dictionary
+## Approach 2: Recursion with Memoization
+1. Define a recursive function that takes remaining amount
 2. Base cases:
-   - If remaining < 0, return infinity (invalid)
-   - If remaining == 0, return 0 (valid)
-   - If remaining in memo, return memoized value
+   - If remaining = 0: return 0
+   - If remaining < 0: return infinity
 3. For each coin:
-   - Recursively calculate minimum coins needed for (remaining - coin)
-   - Update minimum if a valid solution is found
-4. Memoize and return the result
+   - Recursively find minimum coins for (remaining - coin)
+   - Take minimum of all possibilities
+4. Use memoization to avoid redundant calculations
 
 ## Time and Space Complexity
-### Both Approaches
+### Approach 1 (Dynamic Programming)
 - Time Complexity: O(amount * len(coins))
+  - We need to check each amount and each coin
 - Space Complexity: O(amount)
+  - We need to store the dp array
+
+### Approach 2 (Recursion with Memoization)
+- Time Complexity: O(amount * len(coins))
+  - Each amount is computed only once
+  - For each amount, we try all coins
+- Space Complexity: O(amount)
+  - Space for memoization
+  - O(amount) for recursion stack
 
 ## Key Points
 - This is a classic dynamic programming problem
+- The DP approach is more efficient than naive recursion
+- The solution can be extended to find the actual coin combination
+- We need to handle edge cases (amount = 0, impossible amounts)
 - The order of coins doesn't matter
-- We can use each coin multiple times
-- We need to handle the case where no solution exists
-- The recursive approach with memoization can be more intuitive but has the same complexity
 
 ## Common Applications
 - Vending machines
-- Cash register systems
-- Financial calculations
-- Currency conversion
+- Cash registers
+- Banking systems
 - Payment processing
+- Currency conversion
 - Budget planning
+- Resource allocation
 
 ## Example Walkthrough
-For coins = [1,2,5], amount = 11:
+For coins = [1, 2, 5] and amount = 11:
 
 ### Dynamic Programming Approach:
-1. Initialize dp = [0,12,12,12,12,12,12,12,12,12,12,12]
-2. For amount 1: dp = [0,1,12,12,12,12,12,12,12,12,12,12]
-3. For amount 2: dp = [0,1,1,12,12,12,12,12,12,12,12,12]
-4. For amount 3: dp = [0,1,1,2,12,12,12,12,12,12,12,12]
-5. For amount 4: dp = [0,1,1,2,2,12,12,12,12,12,12,12]
-6. For amount 5: dp = [0,1,1,2,2,1,12,12,12,12,12,12]
-7. For amount 6: dp = [0,1,1,2,2,1,2,12,12,12,12,12]
-8. For amount 7: dp = [0,1,1,2,2,1,2,2,12,12,12,12]
-9. For amount 8: dp = [0,1,1,2,2,1,2,2,3,12,12,12]
-10. For amount 9: dp = [0,1,1,2,2,1,2,2,3,3,12,12]
-11. For amount 10: dp = [0,1,1,2,2,1,2,2,3,3,2,12]
-12. For amount 11: dp = [0,1,1,2,2,1,2,2,3,3,2,3]
-13. Return dp[11] = 3
+1. Initialize dp array:
+   ```
+   [0, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf]
+   ```
+2. Fill the array:
+   ```
+   [0, 1, 1, 2, 2, 1, 2, 2, 3, 3, 2, 3]
+   ```
+3. Result: 3
 
-### Recursive Approach with Memoization:
-1. Start with amount = 11
-2. Try coin 5: helper(6, {})
-3. Try coin 2: helper(9, {})
-4. Try coin 1: helper(10, {})
-5. Build up solution using memoization
-6. Return 3 (minimum coins needed) 
+### Recursive Approach:
+1. Try coin 5:
+   - Remaining: 6
+   - Try coin 5 again: remaining 1
+   - Try coin 1: remaining 0
+   - Total: 3 coins
+2. Try other combinations:
+   - 5 + 2 + 2 + 2: 4 coins
+   - 2 + 2 + 2 + 2 + 2 + 1: 6 coins
+3. Result: 3
+
+## Finding the Coin Combination
+To find the actual coin combination:
+1. Use dynamic programming with an additional array to store the last coin used
+2. For each amount:
+   - Update dp[i] and store the coin that led to this minimum
+3. Reconstruct the combination by following the stored coins
+4. Return the list of coins used 
