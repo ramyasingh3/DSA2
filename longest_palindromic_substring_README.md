@@ -1,7 +1,9 @@
 # Longest Palindromic Substring
 
 ## Problem Description
-Given a string `s`, return the longest palindromic substring in `s`. A palindrome is a string that reads the same backward as forward.
+Given a string `s`, return the longest palindromic substring in `s`.
+
+A palindrome is a string that reads the same backward as forward, e.g., "madam" or "racecar".
 
 ## Examples
 ```
@@ -11,72 +13,117 @@ Explanation: Both "bab" and "aba" are valid answers.
 
 Input: s = "cbbd"
 Output: "bb"
-Explanation: The longest palindromic substring is "bb".
+Explanation: "bb" is the longest palindromic substring.
 
 Input: s = "a"
 Output: "a"
-Explanation: The string itself is a palindrome.
+Explanation: Single character is always a palindrome.
 ```
 
 ## Constraints
 - 1 <= s.length <= 1000
-- s consists only of lowercase English letters
+- s consist only of lowercase English letters
 
-## Approach
-1. Use dynamic programming to solve the problem
-2. Create a 2D boolean array dp[i][j] where:
-   - dp[i][j] is true if s[i:j+1] is a palindrome
-   - dp[i][j] is false otherwise
-3. Base cases:
-   - Every single character is a palindrome (dp[i][i] = true)
-   - Two same characters form a palindrome (dp[i][i+1] = true if s[i] == s[i+1])
+## Approach 1: Dynamic Programming
+1. Create a 2D boolean array `dp` where `dp[i][j]` represents whether `s[i:j+1]` is a palindrome
+2. Initialize the diagonal elements (single characters) as true
+3. Check for substrings of length 2
 4. For substrings of length > 2:
-   - If first and last characters match and substring between them is palindrome
-   - Then the whole substring is a palindrome
+   - If first and last characters match and substring between them is palindrome, mark as true
+5. Keep track of the longest palindrome found
+
+## Approach 2: Expand Around Center
+1. For each character in the string:
+   - Expand around it as center for odd length palindromes
+   - Expand around it and next character for even length palindromes
+2. Keep track of the longest palindrome found
+3. Return the substring with maximum length
 
 ## Time and Space Complexity
-- Time Complexity: O(n²) where n is the length of the string
-- Space Complexity: O(n²) for the dp array
+### Approach 1 (Dynamic Programming)
+- Time Complexity: O(n²)
+  - We need to fill the n×n DP table
+- Space Complexity: O(n²)
+  - We need to store the n×n DP table
 
-## Solution
-The solution uses dynamic programming with the following key insights:
-1. We can build up the solution for longer substrings using solutions for shorter substrings
-2. A substring is a palindrome if:
-   - First and last characters match
-   - Substring between them is a palindrome
-3. We need to handle base cases properly
-4. We need to keep track of the longest palindrome found
+### Approach 2 (Expand Around Center)
+- Time Complexity: O(n²)
+  - For each center, we expand up to n/2 times
+- Space Complexity: O(1)
+  - We only use constant extra space
 
 ## Key Points
-- A palindrome reads the same forward and backward
+- This is a classic dynamic programming problem
+- The expand around center approach is more space efficient
 - We need to handle both odd and even length palindromes
-- The solution must be efficient (O(n²) time complexity)
-- We need to handle edge cases (empty string, single character)
-- There might be multiple valid answers of the same length
+- The solution can be extended to count all palindromic substrings
+- The order of characters matters
 
 ## Common Applications
 - DNA sequence analysis
 - Text processing
 - Pattern matching
 - String manipulation
-- Bioinformatics
+- Natural language processing
+- Data compression
+- Cryptography
 
 ## Example Walkthrough
 For s = "babad":
-1. Initialize dp array with all False
-2. Set dp[i][i] = True for all i (single characters)
-3. Check for length 2:
-   - "ba": False
-   - "ab": False
-   - "ba": False
-   - "ad": False
-4. Check for length 3:
-   - "bab": True (first and last match, middle is palindrome)
-   - "aba": True (first and last match, middle is palindrome)
-   - "bad": False
-5. Check for length 4:
-   - "baba": False
-   - "abad": False
-6. Check for length 5:
-   - "babad": False
-7. Return "bab" or "aba" (both are valid answers) 
+
+### Dynamic Programming Approach:
+1. Initialize dp table:
+   ```
+     b a b a d
+   b 1 0 0 0 0
+   a 0 1 0 0 0
+   b 0 0 1 0 0
+   a 0 0 0 1 0
+   d 0 0 0 0 1
+   ```
+2. Check length 2:
+   ```
+     b a b a d
+   b 1 0 0 0 0
+   a 0 1 0 0 0
+   b 0 0 1 0 0
+   a 0 0 0 1 0
+   d 0 0 0 0 1
+   ```
+3. Check length > 2:
+   ```
+     b a b a d
+   b 1 0 1 0 0
+   a 0 1 0 1 0
+   b 0 0 1 0 0
+   a 0 0 0 1 0
+   d 0 0 0 0 1
+   ```
+4. Result: "bab" or "aba"
+
+### Expand Around Center Approach:
+1. Center at 'b':
+   - Odd: "b"
+   - Even: "ba"
+2. Center at 'a':
+   - Odd: "aba"
+   - Even: "ab"
+3. Center at 'b':
+   - Odd: "bab"
+   - Even: "ba"
+4. Center at 'a':
+   - Odd: "a"
+   - Even: "ad"
+5. Center at 'd':
+   - Odd: "d"
+   - Even: N/A
+6. Result: "bab" or "aba"
+
+## Counting Palindromic Substrings
+To count all palindromic substrings:
+1. Use the expand around center approach
+2. For each center:
+   - Count odd length palindromes
+   - Count even length palindromes
+3. Sum up all counts
+4. Return the total number of palindromic substrings 
