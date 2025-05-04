@@ -1,4 +1,4 @@
-# Longest Increasing Subsequence (LIS)
+# Longest Increasing Subsequence
 
 ## Problem Description
 Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
@@ -22,52 +22,58 @@ Explanation: The longest increasing subsequence is [7], therefore the length is 
 
 ## Constraints
 - 1 <= nums.length <= 2500
-- -10^4 <= nums[i] <= 10^4
+- -10⁴ <= nums[i] <= 10⁴
 
 ## Approach 1: Dynamic Programming
 1. Create an array `dp` where `dp[i]` represents the length of LIS ending at index i
-2. Initialize all elements in dp to 1 (each element is a subsequence of length 1)
-3. For each position i:
-   - Check all previous positions j
-   - If nums[i] > nums[j], update dp[i] = max(dp[i], dp[j] + 1)
-4. Return the maximum value in dp
+2. Initialize dp[i] = 1 for all i (each element is a subsequence of length 1)
+3. For each index i:
+   - For each index j < i:
+     - If nums[i] > nums[j]:
+       - dp[i] = max(dp[i], dp[j] + 1)
+4. Return the maximum value in dp array
 
 ## Approach 2: Binary Search
-1. Create an array `sub` to store the smallest possible tail value for all increasing subsequences
+1. Create an array `dp` where `dp[i]` represents the smallest tail of all increasing subsequences of length i+1
 2. For each number in nums:
-   - Use binary search to find the first element in sub that is greater than or equal to the number
-   - If the number is greater than all elements in sub, append it
-   - Otherwise, replace the first element that is greater than or equal to the number
-3. Return the length of sub
+   - Use binary search to find the first index in dp where dp[index] >= num
+   - If num is larger than all elements in dp:
+     - Append num to dp
+   - Else:
+     - Replace dp[index] with num
+3. Return the length of dp array
 
 ## Time and Space Complexity
 ### Approach 1 (Dynamic Programming)
 - Time Complexity: O(n²)
-  - We need to check all previous elements for each position
+  - For each element, we check all previous elements
+  - Each comparison takes O(1) time
 - Space Complexity: O(n)
   - We need to store the dp array
 
 ### Approach 2 (Binary Search)
 - Time Complexity: O(n log n)
   - For each element, we perform binary search
+  - Binary search takes O(log n) time
 - Space Complexity: O(n)
-  - We need to store the sub array
+  - We need to store the dp array
 
 ## Key Points
 - This is a classic dynamic programming problem
 - The binary search approach is more efficient
 - The solution can be extended to find the actual subsequence
-- The order of elements matters
 - We need to handle edge cases (empty array, single element)
+- The order of elements matters
+- Elements can be skipped in the subsequence
 
 ## Common Applications
-- Sequence analysis
+- Stock price analysis
+- DNA sequence analysis
 - Pattern recognition
 - Data compression
-- Bioinformatics
-- Stock market analysis
-- Route planning
+- Network routing
 - Game theory
+- Bioinformatics
 
 ## Example Walkthrough
 For nums = [10, 9, 2, 5, 3, 7, 101, 18]:
@@ -77,14 +83,15 @@ For nums = [10, 9, 2, 5, 3, 7, 101, 18]:
    ```
    [1, 1, 1, 1, 1, 1, 1, 1]
    ```
-2. Fill the array:
+2. Fill the dp array:
    ```
    [1, 1, 1, 2, 2, 3, 4, 4]
    ```
 3. Result: 4
 
 ### Binary Search Approach:
-1. Process each number:
+1. Initialize dp array: []
+2. Process each number:
    - 10: [10]
    - 9: [9]
    - 2: [2]
@@ -93,13 +100,12 @@ For nums = [10, 9, 2, 5, 3, 7, 101, 18]:
    - 7: [2, 3, 7]
    - 101: [2, 3, 7, 101]
    - 18: [2, 3, 7, 18]
-2. Result: 4
+3. Result: 4
 
 ## Finding the Actual Subsequence
-To find the actual LIS:
-1. Use dynamic programming with an additional array to store previous indices
-2. For each position:
-   - Update dp[i] and store the previous index that led to this length
-3. Find the index with maximum length
-4. Reconstruct the subsequence by following the previous indices
-5. Return the reversed subsequence 
+To find the actual longest increasing subsequence:
+1. Use the dp array to track the length of LIS ending at each index
+2. Use a prev array to store the previous index for each element
+3. Find the index of the maximum value in dp
+4. Reconstruct the subsequence by following the prev pointers
+5. Reverse the result to get the subsequence in correct order 
