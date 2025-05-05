@@ -1,178 +1,217 @@
+"""
+Binary Tree Level Order Traversal Implementation
+
+This file contains multiple implementations to perform level order traversal of a binary tree.
+
+Problem Statement:
+Given the root of a binary tree, return the level order traversal of its nodes' values.
+(i.e., from left to right, level by level).
+
+Time Complexity: O(n) for optimal solution
+Space Complexity: O(w) for optimal solution, where w is the maximum width of the tree
+"""
+
 from collections import deque
+from typing import List, Optional
 
 class TreeNode:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
+    """Binary Tree Node class"""
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
 
-class Solution:
-    def levelOrder(self, root):
-        """
-        Perform level order traversal of a binary tree.
-        Returns a list of lists, where each inner list represents one level of the tree.
+def level_order_queue(root: Optional[TreeNode]) -> List[List[int]]:
+    """
+    Level order traversal using queue (BFS).
+    Time Complexity: O(n)
+    Space Complexity: O(w) where w is the maximum width of the tree
+    """
+    if not root:
+        return []
+    
+    result = []
+    queue = deque([root])
+    
+    while queue:
+        level_size = len(queue)
+        current_level = []
         
-        Args:
-            root: Root node of the binary tree
+        for _ in range(level_size):
+            node = queue.popleft()
+            current_level.append(node.val)
             
-        Returns:
-            List of lists containing values at each level
-        """
-        if not root:
-            return []
-        
-        result = []
-        queue = deque([(root, 0)])  # (node, level)
-        
-        while queue:
-            node, level = queue.popleft()
-            
-            # Add a new level list if needed
-            if len(result) == level:
-                result.append([])
-            
-            # Add current node's value to its level
-            result[level].append(node.value)
-            
-            # Add children to queue with next level
             if node.left:
-                queue.append((node.left, level + 1))
+                queue.append(node.left)
             if node.right:
-                queue.append((node.right, level + 1))
+                queue.append(node.right)
         
-        return result
+        result.append(current_level)
     
-    def levelOrderSpiral(self, root):
-        """
-        Variant: Spiral (Zigzag) Level Order Traversal
-        Odd levels are traversed left to right, even levels right to left
-        
-        Args:
-            root: Root node of the binary tree
-            
-        Returns:
-            List of lists containing values at each level in spiral order
-        """
-        if not root:
-            return []
-        
-        result = []
-        queue = deque([(root, 0)])
-        
-        while queue:
-            level_size = len(queue)
-            current_level = []
-            
-            for _ in range(level_size):
-                node, level = queue.popleft()
-                current_level.append(node.value)
-                
-                if node.left:
-                    queue.append((node.left, level + 1))
-                if node.right:
-                    queue.append((node.right, level + 1))
-            
-            # Reverse alternate levels
-            if level % 2 == 1:
-                current_level.reverse()
-            
-            result.append(current_level)
-        
-        return result
+    return result
 
-def build_test_tree1():
+def level_order_recursive(root: Optional[TreeNode]) -> List[List[int]]:
     """
-    Builds test tree 1:
-         1
-        / \
-       2   3
-      / \
-     4   5
+    Level order traversal using recursion.
+    Time Complexity: O(n)
+    Space Complexity: O(h) where h is the height of the tree (due to recursion stack)
     """
-    root = TreeNode(1)
-    root.left = TreeNode(2)
-    root.right = TreeNode(3)
-    root.left.left = TreeNode(4)
-    root.left.right = TreeNode(5)
-    return root
-
-def build_test_tree2():
-    """
-    Builds test tree 2:
-           1
-          / \
-         2   3
-        /     \
-       4       5
-      /         \
-     6           7
-    """
-    root = TreeNode(1)
-    root.left = TreeNode(2)
-    root.right = TreeNode(3)
-    root.left.left = TreeNode(4)
-    root.right.right = TreeNode(5)
-    root.left.left.left = TreeNode(6)
-    root.right.right.right = TreeNode(7)
-    return root
-
-def build_test_tree3():
-    """
-    Builds test tree 3:
-         1
-        / \
-       2   3
-      /   / \
-     4   5   6
-        /     \
-       7       8
-    """
-    root = TreeNode(1)
-    root.left = TreeNode(2)
-    root.right = TreeNode(3)
-    root.left.left = TreeNode(4)
-    root.right.left = TreeNode(5)
-    root.right.right = TreeNode(6)
-    root.right.left.left = TreeNode(7)
-    root.right.right.right = TreeNode(8)
-    return root
-
-def print_tree(node, level=0, prefix="Root: "):
-    """Helper function to print the tree structure"""
-    if not node:
-        return
+    def traverse(node: Optional[TreeNode], level: int, result: List[List[int]]) -> None:
+        if not node:
+            return
+        
+        # Add a new level list if needed
+        if level >= len(result):
+            result.append([])
+        
+        # Add current node's value to its level
+        result[level].append(node.val)
+        
+        # Recursively process children
+        traverse(node.left, level + 1, result)
+        traverse(node.right, level + 1, result)
     
-    print("  " * level + prefix + str(node.value))
-    if node.left or node.right:
+    result = []
+    traverse(root, 0, result)
+    return result
+
+def level_order_dfs(root: Optional[TreeNode]) -> List[List[int]]:
+    """
+    Level order traversal using DFS.
+    Time Complexity: O(n)
+    Space Complexity: O(h) where h is the height of the tree
+    """
+    def get_height(node: Optional[TreeNode]) -> int:
+        if not node:
+            return 0
+        return 1 + max(get_height(node.left), get_height(node.right))
+    
+    def process_level(node: Optional[TreeNode], level: int, result: List[List[int]]) -> None:
+        if not node:
+            return
+        
+        result[level].append(node.val)
+        
         if node.left:
-            print_tree(node.left, level + 1, "L--- ")
+            process_level(node.left, level + 1, result)
         if node.right:
-            print_tree(node.right, level + 1, "R--- ")
+            process_level(node.right, level + 1, result)
+    
+    if not root:
+        return []
+    
+    height = get_height(root)
+    result = [[] for _ in range(height)]
+    process_level(root, 0, result)
+    return result
 
-# Test cases
+def level_order_zigzag(root: Optional[TreeNode]) -> List[List[int]]:
+    """
+    Level order traversal in zigzag pattern.
+    Time Complexity: O(n)
+    Space Complexity: O(w) where w is the maximum width of the tree
+    """
+    if not root:
+        return []
+    
+    result = []
+    queue = deque([root])
+    left_to_right = True
+    
+    while queue:
+        level_size = len(queue)
+        current_level = []
+        
+        for _ in range(level_size):
+            node = queue.popleft()
+            current_level.append(node.val)
+            
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        
+        if not left_to_right:
+            current_level.reverse()
+        
+        result.append(current_level)
+        left_to_right = not left_to_right
+    
+    return result
+
+def create_tree(values: List[Optional[int]], index: int = 0) -> Optional[TreeNode]:
+    """Helper function to create a binary tree from a list of values"""
+    if index >= len(values) or values[index] is None:
+        return None
+    
+    root = TreeNode(values[index])
+    root.left = create_tree(values, 2 * index + 1)
+    root.right = create_tree(values, 2 * index + 2)
+    return root
+
+def test_level_order_traversal():
+    """Test cases for level order traversal implementations"""
+    test_cases = [
+        ([3,9,20,None,None,15,7],
+         [[3],[9,20],[15,7]]),                    # Standard case
+        ([1],
+         [[1]]),                                   # Single node
+        ([],
+         []),                                      # Empty tree
+        ([1,2,3,4,5,6,7],
+         [[1],[2,3],[4,5,6,7]]),                  # Perfect binary tree
+        ([1,None,2],
+         [[1],[2]]),                              # Right skewed
+        ([1,2,None,3],
+         [[1],[2],[3]]),                          # Left skewed
+        ([1,2,3,4,None,None,5],
+         [[1],[2,3],[4,5]]),                      # Irregular tree
+    ]
+    
+    for values, expected in test_cases:
+        root = create_tree(values)
+        
+        # Test queue-based approach
+        result = level_order_queue(root)
+        assert result == expected, f"Queue test failed for {values}"
+        
+        # Test recursive approach
+        result = level_order_recursive(root)
+        assert result == expected, f"Recursive test failed for {values}"
+        
+        # Test DFS approach
+        result = level_order_dfs(root)
+        assert result == expected, f"DFS test failed for {values}"
+        
+        # Test zigzag approach (only test length and elements, not order)
+        result = level_order_zigzag(root)
+        assert len(result) == len(expected), f"Zigzag test failed for {values}"
+        assert sorted([x for level in result for x in level]) == \
+               sorted([x for level in expected for x in level]), \
+               f"Zigzag test failed for {values}"
+    
+    print("All test cases passed!")
+
 if __name__ == "__main__":
-    solution = Solution()
+    # Run test cases
+    test_level_order_traversal()
     
-    # Test case 1: Simple balanced tree
-    print("\nTest Case 1: Simple balanced tree")
-    root1 = build_test_tree1()
-    print("Tree structure:")
-    print_tree(root1)
-    print("Level order traversal:", solution.levelOrder(root1))
-    print("Spiral level order:", solution.levelOrderSpiral(root1))
+    # Example usage
+    test_trees = [
+        [3,9,20,None,None,15,7],
+        [1],
+        [],
+        [1,2,3,4,5,6,7],
+        [1,None,2],
+        [1,2,None,3],
+        [1,2,3,4,None,None,5]
+    ]
     
-    # Test case 2: Unbalanced tree
-    print("\nTest Case 2: Unbalanced tree")
-    root2 = build_test_tree2()
-    print("Tree structure:")
-    print_tree(root2)
-    print("Level order traversal:", solution.levelOrder(root2))
-    print("Spiral level order:", solution.levelOrderSpiral(root2))
-    
-    # Test case 3: Complex tree
-    print("\nTest Case 3: Complex tree")
-    root3 = build_test_tree3()
-    print("Tree structure:")
-    print_tree(root3)
-    print("Level order traversal:", solution.levelOrder(root3))
-    print("Spiral level order:", solution.levelOrderSpiral(root3)) 
+    print("\nTesting various trees:")
+    for values in test_trees:
+        root = create_tree(values)
+        print(f"\nTree values: {values}")
+        print(f"Using queue-based BFS: {level_order_queue(root)}")
+        print(f"Using recursion: {level_order_recursive(root)}")
+        print(f"Using DFS: {level_order_dfs(root)}")
+        print(f"Using zigzag traversal: {level_order_zigzag(root)}") 
