@@ -15,63 +15,58 @@ Example 2:
 Input: nums = [0,3,7,2,5,8,4,6,0,1]
 Output: 9
 Explanation: The longest consecutive elements sequence is [0, 1, 2, 3, 4, 5, 6, 7, 8]. Length = 9.
+
+Time Complexity: O(n) where n is the length of the input array
+Space Complexity: O(n) to store the numbers in a set
 """
 
-def longest_consecutive(nums):
+from typing import List
+
+def longest_consecutive(nums: List[int]) -> int:
     if not nums:
-        return 0, []
+        return 0
     
     # Convert to set for O(1) lookup
     num_set = set(nums)
     max_length = 0
-    max_sequence = []
     
     for num in num_set:
         # Only start checking sequences from the smallest number in the sequence
         if num - 1 not in num_set:
             current_num = num
             current_length = 1
-            current_sequence = [current_num]
             
-            # Keep checking next consecutive number
+            # Count consecutive numbers
             while current_num + 1 in num_set:
                 current_num += 1
                 current_length += 1
-                current_sequence.append(current_num)
             
-            # Update maximum if current sequence is longer
-            if current_length > max_length:
-                max_length = current_length
-                max_sequence = current_sequence
+            # Update max_length if current sequence is longer
+            max_length = max(max_length, current_length)
     
-    return max_length, max_sequence
+    return max_length
 
 def test_longest_consecutive():
     test_cases = [
-        ([100,4,200,1,3,2], 4, [1,2,3,4]),
-        ([0,3,7,2,5,8,4,6,0,1], 9, [0,1,2,3,4,5,6,7,8]),
-        ([], 0, []),
-        ([1], 1, [1]),
-        ([1,2,3,5,7,8,9], 3, [1,2,3]),
-        ([1,1,1,1], 1, [1]),
-        ([5,4,3,2,1], 5, [1,2,3,4,5]),
+        ([100,4,200,1,3,2], 4),
+        ([0,3,7,2,5,8,4,6,0,1], 9),
+        ([], 0),
+        ([1], 1),
+        ([1,2,3,5,7,8,9], 3),
+        ([1,1,1,1], 1),
+        ([5,4,3,2,1], 5),
     ]
     
-    for i, (nums, expected_length, expected_sequence) in enumerate(test_cases, 1):
-        length, sequence = longest_consecutive(nums)
+    for i, (nums, expected_length) in enumerate(test_cases, 1):
+        length = longest_consecutive(nums)
         print(f"\nTest Case {i}:")
         print(f"Input array: {nums}")
         print(f"Expected length: {expected_length}, Got: {length}")
-        print(f"Expected sequence: {expected_sequence}")
-        print(f"Got sequence: {sequence}")
         
         # Check if the result is correct
         # Note: For cases with multiple possible sequences of same length,
         # we only check the length
-        result = "✓ Passed" if length == expected_length and (
-            len(sequence) == len(expected_sequence) and 
-            all(b-a == 1 for a, b in zip(sequence, sequence[1:]))
-        ) else "✗ Failed"
+        result = "✓ Passed" if length == expected_length else "✗ Failed"
         print(f"Result: {result}")
         print("-" * 50)
 
